@@ -3,7 +3,7 @@
 Summary: A high-level cross-protocol url-grabber
 Name: python-urlgrabber
 Version: 3.9.1
-Release: 9%{?dist}
+Release: 11%{?dist}
 Source0: urlgrabber-%{version}.tar.gz
 Patch1: urlgrabber-HEAD.patch
 Patch2: BZ-604724-urlgrabber-basename+options.patch
@@ -11,6 +11,11 @@ Patch2: BZ-604724-urlgrabber-basename+options.patch
 Patch3: curl-workarounds.patch
 # RHEL-6.5 fast
 Patch11: BZ-807030-error-timestamp-typo.patch
+
+# RHEL-6.8
+Patch21: BZ-970262-ftp-anaconda-exception.patch
+Patch22: BZ-1271242-set-proper-errcode.patch
+Patch23: BZ-849177-ftp-disable-epsv.patch
 
 License: LGPLv2+
 Group: Development/Libraries
@@ -34,6 +39,10 @@ authentication, proxies and more.
 
 %patch11 -p1
 
+%patch21 -p1
+%patch22 -p1
+%patch23 -p1
+
 %build
 python setup.py build
 
@@ -52,6 +61,16 @@ rm -rf $RPM_BUILD_ROOT
 %{_bindir}/urlgrabber
 
 %changelog
+* Mon Dec 21 2015 Valentina Mukhamedzhanova <vmukhame@redhat.com> 3.9.1-11
+- Add ftp_disable_epsv option.
+- Resolves: bug#849177
+
+* Mon Dec 14 2015 Valentina Mukhamedzhanova <vmukhame@redhat.com> 3.9.1-10
+- Fix parsing of FTP 213 responses.
+- Resolves: bug#970262
+- Set proper errcode when raising URLGRabError.
+- Resolves: bug#1271242
+
 * Wed May 29 2013 James Antill <james@fedoraproject.org> 3.9.1-9
 - Fix a typo when raising the error for setting timestamp.
 - Resolves: rhbz#807030

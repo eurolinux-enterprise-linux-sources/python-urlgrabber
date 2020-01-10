@@ -1,0 +1,27 @@
+commit 1596446cf5cc9777c91f0cc1023d482ac9c2226f
+Author: Zdenek Pavlas <zpavlas@redhat.com>
+Date:   Wed Jun 12 14:29:01 2013 +0200
+
+    Fix parsing of FTP 213 responses
+    
+    Curl queries both mtime and file size, and the FTP protocol
+    uses the same reply code for both.  We're only interested
+    in file size to show the correct download progress.
+    
+    rfc3659 specifies time-val to be exactly 14 digits, followed
+    by optional fraction part.  We can safely assume that we won't
+    download a 10TB+ file.
+
+diff --git a/urlgrabber/grabber.py b/urlgrabber/grabber.py
+index 05ea9c3..b5960a3 100644
+--- a/urlgrabber/grabber.py
++++ b/urlgrabber/grabber.py
+@@ -1312,6 +1312,8 @@ class PyCurlFileObject(object):
+                 s = None
+                 if buf.startswith('213 '):
+                     s = buf[3:].strip()
++                    if len(s) >= 14:
++                        s = None # ignore MDTM responses
+                 elif buf.startswith('150 '):
+                     s = parse150(buf)
+                 if s:
