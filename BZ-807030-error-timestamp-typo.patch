@@ -1,0 +1,13 @@
+diff -ru urlgrabber-3.9.1-orig/urlgrabber/grabber.py urlgrabber-3.9.1/urlgrabber/grabber.py
+--- urlgrabber-3.9.1-orig/urlgrabber/grabber.py	2013-05-29 16:37:30.054810823 -0400
++++ urlgrabber-3.9.1/urlgrabber/grabber.py	2013-05-29 16:37:58.352490237 -0400
+@@ -1503,7 +1503,7 @@
+                 except OSError, e:
+                     err = URLGrabError(16, _(\
+                       'error setting timestamp on file %s from %s, OSError: %s') 
+-                              % (self.filenameself.url, e))
++                              % (self.filename, self.url, e))
+                     err.url = self.url
+                     raise err
+             # re open it
+Only in urlgrabber-3.9.1/urlgrabber: grabber.py~

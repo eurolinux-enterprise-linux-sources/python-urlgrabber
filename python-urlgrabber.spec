@@ -3,12 +3,14 @@
 Summary: A high-level cross-protocol url-grabber
 Name: python-urlgrabber
 Version: 3.9.1
-Release: 8%{?dist}
+Release: 9%{?dist}
 Source0: urlgrabber-%{version}.tar.gz
 Patch1: urlgrabber-HEAD.patch
 Patch2: BZ-604724-urlgrabber-basename+options.patch
 # Holding BZ 695747
 Patch3: curl-workarounds.patch
+# RHEL-6.5 fast
+Patch11: BZ-807030-error-timestamp-typo.patch
 
 License: LGPLv2+
 Group: Development/Libraries
@@ -30,6 +32,8 @@ authentication, proxies and more.
 %patch2 -p1
 %patch3 -p1
 
+%patch11 -p1
+
 %build
 python setup.py build
 
@@ -48,6 +52,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_bindir}/urlgrabber
 
 %changelog
+* Wed May 29 2013 James Antill <james@fedoraproject.org> 3.9.1-9
+- Fix a typo when raising the error for setting timestamp.
+- Resolves: rhbz#807030
+
 * Tue Apr 12 2011 James Antill <james@fedoraproject.org> 3.9.1-8
 - Work around some problems in curl.
 - Resolves: rhbz#695747
