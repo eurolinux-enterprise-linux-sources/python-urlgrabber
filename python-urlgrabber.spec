@@ -3,10 +3,12 @@
 Summary: A high-level cross-protocol url-grabber
 Name: python-urlgrabber
 Version: 3.9.1
-Release: 7%{?dist}
+Release: 8%{?dist}
 Source0: urlgrabber-%{version}.tar.gz
 Patch1: urlgrabber-HEAD.patch
 Patch2: BZ-604724-urlgrabber-basename+options.patch
+# Holding BZ 695747
+Patch3: curl-workarounds.patch
 
 License: LGPLv2+
 Group: Development/Libraries
@@ -26,6 +28,7 @@ authentication, proxies and more.
 %setup -q -n urlgrabber-%{version}
 %patch1 -p1
 %patch2 -p1
+%patch3 -p1
 
 %build
 python setup.py build
@@ -45,6 +48,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_bindir}/urlgrabber
 
 %changelog
+* Tue Apr 12 2011 James Antill <james@fedoraproject.org> 3.9.1-8
+- Work around some problems in curl.
+- Resolves: rhbz#695747
+
 * Wed Jul 14 2010 James Antill <james@fedoraproject.org> 3.9.1-7
 - Fix automatic basename for downloads, and -o option problems.
 - Resolves: rhbz#604724

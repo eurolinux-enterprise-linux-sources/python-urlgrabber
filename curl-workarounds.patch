@@ -1,0 +1,51 @@
+commit b6bfd59c4393ea8ba5165aabb249c37d6d2a9931
+Author: Seth Vidal <skvidal@fedoraproject.org>
+Date:   Fri Mar 18 10:23:09 2011 -0400
+
+    - if we're not using keepalives then don't reuse the connections
+    - ssl verify host needs to be '2' when it is set to true - 1 is kinda meaningless
+
+diff --git a/urlgrabber/grabber.py b/urlgrabber/grabber.py
+index 29793f0..aba9bbc 100644
+--- a/urlgrabber/grabber.py
++++ b/urlgrabber/grabber.py
+@@ -1193,6 +1193,9 @@ class PyCurlFileObject(object):
+         if not opts:
+             opts = self.opts
+ 
++        # keepalives
++        if not opts.keepalive:
++            self.curl_obj.setopt(pycurl.FORBID_REUSE, 1)
+ 
+         # defaults we're always going to set
+         self.curl_obj.setopt(pycurl.NOPROGRESS, False)
+@@ -1236,7 +1239,8 @@ class PyCurlFileObject(object):
+                 self.curl_obj.setopt(pycurl.CAPATH, opts.ssl_ca_cert)
+                 self.curl_obj.setopt(pycurl.CAINFO, opts.ssl_ca_cert)
+             self.curl_obj.setopt(pycurl.SSL_VERIFYPEER, opts.ssl_verify_peer)
+-            self.curl_obj.setopt(pycurl.SSL_VERIFYHOST, opts.ssl_verify_host)
++            if opts.ssl_verify_host: # 1 is meaningless to curl
++                self.curl_obj.setopt(pycurl.SSL_VERIFYHOST, 2)
+             if opts.ssl_key:
+                 self.curl_obj.setopt(pycurl.SSLKEY, opts.ssl_key)
+             if opts.ssl_key_type:
+commit 59bfadbf84d54e279049e1743fd2b20bdac01857
+Author: Seth Vidal <skvidal@fedoraproject.org>
+Date:   Fri Apr 8 12:27:00 2011 -0400
+
+    if we're using a client-side certificate we need to turn off
+    reusing of connections b/c nss is odd
+
+diff --git a/urlgrabber/grabber.py b/urlgrabber/grabber.py
+index e2cd5c9..36212cf 100644
+--- a/urlgrabber/grabber.py
++++ b/urlgrabber/grabber.py
+@@ -1250,6 +1250,8 @@ class PyCurlFileObject(object):
+                 self.curl_obj.setopt(pycurl.SSLKEYTYPE, opts.ssl_key_type)
+             if opts.ssl_cert:
+                 self.curl_obj.setopt(pycurl.SSLCERT, opts.ssl_cert)
++                # if we have a client side cert - turn off reuse b/c nss is odd
++                self.curl_obj.setopt(pycurl.FORBID_REUSE, 1)
+             if opts.ssl_cert_type:                
+                 self.curl_obj.setopt(pycurl.SSLCERTTYPE, opts.ssl_cert_type)
+             if opts.ssl_key_pass:
