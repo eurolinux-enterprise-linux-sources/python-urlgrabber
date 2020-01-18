@@ -3,7 +3,7 @@
 Summary: A high-level cross-protocol url-grabber
 Name: python-urlgrabber
 Version: 3.10
-Release: 8%{?dist}
+Release: 9%{?dist}
 Source0: http://urlgrabber.baseurl.org/download/urlgrabber-%{version}.tar.gz
 Patch1: BZ-853432-single-conn-reset.patch
 Patch2: BZ-1017491-respond-to-ctrl-c.patch
@@ -17,6 +17,9 @@ Patch20: BZ-1233329-timedhosts-parsing-error-handling.patch
 
 # rhel-7.3
 Patch25: BZ-1342179-add-retry-no-cache-opt.patch
+
+# rhel-7.6
+Patch30: BZ-1204825-add-curl-object-opt.patch
 
 License: LGPLv2+
 Group: Development/Libraries
@@ -47,6 +50,9 @@ authentication, proxies and more.
 # rhel-7.3
 %patch25 -p1
 
+# rhel-7.6
+%patch30 -p1
+
 %build
 python setup.py build
 
@@ -66,6 +72,10 @@ rm -rf $RPM_BUILD_ROOT
 %attr(0755,root,root) %{_libexecdir}/urlgrabber-ext-down
 
 %changelog
+* Fri May 25 2018 Michal Domonkos <mdomonko@redhat.com> - 3.10-9
+- Add curl_obj option.
+- Resolves: bug#1204825
+
 * Thu Jun 30 2016 Valentina Mukhamedzhanova <vmukhame@redhat.com> - 3.10-8
 - Add no_cache and retry_no_cache options.
 - Resolves: bug#1342179
