@@ -1,0 +1,31 @@
+From 93ad446fc6533304e33b231cd5786572773440b9 Mon Sep 17 00:00:00 2001
+From: Zdenek Pavlas <zpavlas@redhat.com>
+Date: Mon, 21 Oct 2013 16:52:53 +0200
+Subject: [PATCH] single-conn mode: Kill the cached idle connection. BZ 853432
+
+The multi-downloader manages connections as necessary, caching
+at most one downloader per host. But there's one more connection,
+used by the legacy downloader.  In case keepalive=1 (default),
+it's still connected, possibly to the same connection-limited
+host.  Kill it.
+---
+ urlgrabber/grabber.py | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/urlgrabber/grabber.py b/urlgrabber/grabber.py
+index b004f4d..d06cdae 100644
+--- a/urlgrabber/grabber.py
++++ b/urlgrabber/grabber.py
+@@ -2221,6 +2221,9 @@ def parallel_wait(meter=None):
+                 # Turn on the max_connections=1 override. BZ 853432
+                 if DEBUG: DEBUG.info('max_connections(%s) %s => 1', key, limit)
+                 single.add(key)
++                # When using multi-downloader the parent's _curl_cache
++                # object is idle. Kill it, as it might use keepalive=1.
++                reset_curl_obj()
+ 
+             retry = opts.retry or 0
+             if opts.failure_callback:
+-- 
+1.7.11.7
+

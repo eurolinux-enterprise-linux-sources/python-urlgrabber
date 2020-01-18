@@ -1,0 +1,60 @@
+commit 42b5945c99d92d55b5d401f2d934fe8fcc19f98b
+Author: Zdenek Pavlas <zpavlas@redhat.com>
+Date:   Mon Nov 4 15:32:43 2013 +0100
+
+    Tell curl to return immediately on ctrl-c. BZ 1017491
+
+diff --git a/urlgrabber/grabber.py b/urlgrabber/grabber.py
+index 03fa1ba..579c2ff 100644
+--- a/urlgrabber/grabber.py
++++ b/urlgrabber/grabber.py
+@@ -1903,6 +1903,8 @@ class PyCurlFileObject(object):
+             urllib.addinfourl, via. urllib.URLopener.* """
+         return self.url
+         
++# tell curl to return immediately on ctrl-c
++pycurl.global_init(pycurl.GLOBAL_DEFAULT | pycurl.GLOBAL_ACK_EINTR)
+ _curl_cache = pycurl.Curl() # make one and reuse it over and over and over
+ 
+ def reset_curl_obj():
+commit 857af5ac1cec0a06755b75286ae2192e398cd341
+Author: Zdenek Pavlas <zpavlas@redhat.com>
+Date:   Wed Dec 18 13:12:00 2013 +0100
+
+    Don't fail with older pycurl.
+
+diff --git a/urlgrabber/grabber.py b/urlgrabber/grabber.py
+index 579c2ff..ef18d6a 100644
+--- a/urlgrabber/grabber.py
++++ b/urlgrabber/grabber.py
+@@ -1903,8 +1903,9 @@ class PyCurlFileObject(object):
+             urllib.addinfourl, via. urllib.URLopener.* """
+         return self.url
+         
+-# tell curl to return immediately on ctrl-c
+-pycurl.global_init(pycurl.GLOBAL_DEFAULT | pycurl.GLOBAL_ACK_EINTR)
++if hasattr(pycurl, 'GLOBAL_ACK_EINTR'):
++    # fail immediately on ctrl-c
++    pycurl.global_init(pycurl.GLOBAL_DEFAULT | pycurl.GLOBAL_ACK_EINTR)
+ _curl_cache = pycurl.Curl() # make one and reuse it over and over and over
+ 
+ def reset_curl_obj():
+commit bf0a0be71373dec515bbb54e0613a3b9b0c00b04
+Author: Valentina Mukhamedzhanova <vmukhame@redhat.com>
+Date:   Tue Feb 4 10:11:58 2014 +0100
+
+    Treat curl errcodes 42, 55, 66 as Ctrl-C BZ#1017491
+
+diff --git a/urlgrabber/grabber.py b/urlgrabber/grabber.py
+index 04f1179..f8deeb8 100644
+--- a/urlgrabber/grabber.py
++++ b/urlgrabber/grabber.py
+@@ -1517,7 +1517,7 @@ class PyCurlFileObject(object):
+                 err.url = errurl
+                 raise err
+                 
+-            elif errcode == 42:
++            elif errcode in (42, 55, 56):
+                 # this is probably wrong but ultimately this is what happens
+                 # we have a legit http code and a pycurl 'writer failed' code
+                 # which almost always means something aborted it from outside
