@@ -3,7 +3,7 @@
 Summary: A high-level cross-protocol url-grabber
 Name: python-urlgrabber
 Version: 3.10
-Release: 7%{?dist}
+Release: 8%{?dist}
 Source0: http://urlgrabber.baseurl.org/download/urlgrabber-%{version}.tar.gz
 Patch1: BZ-853432-single-conn-reset.patch
 Patch2: BZ-1017491-respond-to-ctrl-c.patch
@@ -14,6 +14,9 @@ Patch11: BZ-1082648-curl-77-error-message.patch
 
 # rhel-7.2
 Patch20: BZ-1233329-timedhosts-parsing-error-handling.patch
+
+# rhel-7.3
+Patch25: BZ-1342179-add-retry-no-cache-opt.patch
 
 License: LGPLv2+
 Group: Development/Libraries
@@ -41,6 +44,9 @@ authentication, proxies and more.
 # rhel-7.2
 %patch20 -p1
 
+# rhel-7.3
+%patch25 -p1
+
 %build
 python setup.py build
 
@@ -60,6 +66,10 @@ rm -rf $RPM_BUILD_ROOT
 %attr(0755,root,root) %{_libexecdir}/urlgrabber-ext-down
 
 %changelog
+* Thu Jun 30 2016 Valentina Mukhamedzhanova <vmukhame@redhat.com> - 3.10-8
+- Add no_cache and retry_no_cache options.
+- Resolves: bug#1342179
+
 * Tue Jun 30 2015 Valentina Mukhamedzhanova <vmukhame@redhat.com> - 3.10-7
 - Don't crash on timedhosts parsing error.
 - Resolves: bug#1233329
