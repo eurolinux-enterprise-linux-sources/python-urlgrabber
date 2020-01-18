@@ -1,0 +1,24 @@
+commit 7644d090e186c44d577f8d06de57bd815e0dc8b0
+Author: Valentina Mukhamedzhanova <vmukhame@redhat.com>
+Date:   Tue Jun 23 10:00:12 2015 +0200
+
+    Don't crash on timedhosts parsing error. BZ#1233329
+
+diff --git a/urlgrabber/grabber.py b/urlgrabber/grabber.py
+index 91cdbdd..f09d4a5 100644
+--- a/urlgrabber/grabber.py
++++ b/urlgrabber/grabber.py
+@@ -2377,8 +2377,11 @@ class _TH:
+             try:
+                 now = int(time.time())
+                 for line in open(filename):
+-                    host, speed, fail, ts = line.rsplit(' ', 3)
+-                    _TH.hosts[host] = int(speed), int(fail), min(int(ts), now)
++                    try:
++                        host, speed, fail, ts = line.rsplit(' ', 3)
++                        _TH.hosts[host] = int(speed), int(fail), min(int(ts), now)
++                    except ValueError:
++                        if DEBUG: DEBUG.info('Error parsing timedhosts: line "%s"', line)
+             except IOError: pass
+             _TH.dirty = False
+ 

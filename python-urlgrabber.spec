@@ -3,7 +3,7 @@
 Summary: A high-level cross-protocol url-grabber
 Name: python-urlgrabber
 Version: 3.10
-Release: 6%{?dist}
+Release: 7%{?dist}
 Source0: http://urlgrabber.baseurl.org/download/urlgrabber-%{version}.tar.gz
 Patch1: BZ-853432-single-conn-reset.patch
 Patch2: BZ-1017491-respond-to-ctrl-c.patch
@@ -11,6 +11,9 @@ Patch2: BZ-1017491-respond-to-ctrl-c.patch
 # rhel-7.1.0
 Patch10: BZ-1099101-revert-curl-ctrl-c.patch
 Patch11: BZ-1082648-curl-77-error-message.patch
+
+# rhel-7.2
+Patch20: BZ-1233329-timedhosts-parsing-error-handling.patch
 
 License: LGPLv2+
 Group: Development/Libraries
@@ -35,6 +38,9 @@ authentication, proxies and more.
 %patch10 -p1
 %patch11 -p1
 
+# rhel-7.2
+%patch20 -p1
+
 %build
 python setup.py build
 
@@ -54,6 +60,10 @@ rm -rf $RPM_BUILD_ROOT
 %attr(0755,root,root) %{_libexecdir}/urlgrabber-ext-down
 
 %changelog
+* Tue Jun 30 2015 Valentina Mukhamedzhanova <vmukhame@redhat.com> - 3.10-7
+- Don't crash on timedhosts parsing error.
+- Resolves: bug#1233329
+
 * Wed Sep 24 2014 Valentina Mukhamedzhanova <vmukhame@redhat.com> - 3.10-6
 - Add a comprehensive error message to curl error 77.
 - Resolves: bug#1082648
