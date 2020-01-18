@@ -3,10 +3,14 @@
 Summary: A high-level cross-protocol url-grabber
 Name: python-urlgrabber
 Version: 3.10
-Release: 4%{?dist}
+Release: 6%{?dist}
 Source0: http://urlgrabber.baseurl.org/download/urlgrabber-%{version}.tar.gz
 Patch1: BZ-853432-single-conn-reset.patch
 Patch2: BZ-1017491-respond-to-ctrl-c.patch
+
+# rhel-7.1.0
+Patch10: BZ-1099101-revert-curl-ctrl-c.patch
+Patch11: BZ-1082648-curl-77-error-message.patch
 
 License: LGPLv2+
 Group: Development/Libraries
@@ -27,6 +31,10 @@ authentication, proxies and more.
 %patch1 -p1
 %patch2 -p1
 
+# rhel-7.1.0
+%patch10 -p1
+%patch11 -p1
+
 %build
 python setup.py build
 
@@ -46,6 +54,14 @@ rm -rf $RPM_BUILD_ROOT
 %attr(0755,root,root) %{_libexecdir}/urlgrabber-ext-down
 
 %changelog
+* Wed Sep 24 2014 Valentina Mukhamedzhanova <vmukhame@redhat.com> - 3.10-6
+- Add a comprehensive error message to curl error 77.
+- Resolves: bug#1082648
+
+* Wed Sep 10 2014 Valentina Mukhamedzhanova <vmukhame@redhat.com> - 3.10-5
+- Revert treating curl errcodes 55 and 56 as Ctrl-C.
+- Resolves: bug#1099101
+
 * Tue Feb 4 2014 Valentina Mukhamedzhanova <vmukhame@redhat.com> - 3.10-4
 - Treat curl errcodes 55 and 56 as Ctrl-C.
 - Resolves: bug#1017491

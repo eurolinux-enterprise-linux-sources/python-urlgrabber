@@ -1,0 +1,18 @@
+commit e19463a8781fa5de74e62a09684259309b2f89cf
+Author: Valentina Mukhamedzhanova <vmukhame@redhat.com>
+Date:   Mon Sep 22 14:45:10 2014 +0200
+
+    Add a comprehensive error message to pycurl error 77. BZ 1082648
+
+diff --git a/urlgrabber/grabber.py b/urlgrabber/grabber.py
+index fd31123..961d18a 100644
+--- a/urlgrabber/grabber.py
++++ b/urlgrabber/grabber.py
+@@ -1576,6 +1576,7 @@ class PyCurlFileObject(object):
+                              67 : _("Authentication failure"),
+                              70 : _("Out of disk space on server"),
+                              73 : _("Remove file exists"),
++                             77 : _("Problem with the SSL CA cert (path? access rights?)"),
+                               }
+                 errstr = str(e.args[1]) or pyerr2str.get(errcode, '<Unknown>')
+                 if code and not 200 <= code <= 299:

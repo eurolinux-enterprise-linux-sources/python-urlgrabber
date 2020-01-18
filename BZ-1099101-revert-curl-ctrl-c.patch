@@ -1,0 +1,19 @@
+commit 545eb9bbc325a2f59803dfb199ef64dec6db8774
+Author: Valentina Mukhamedzhanova <vmukhame@redhat.com>
+Date:   Wed Sep 10 10:04:10 2014 +0200
+
+    Revert bf0a0be71373dec515bbb54e0613a3b9b0c00b04 - curl error codes.
+
+diff --git a/urlgrabber/grabber.py b/urlgrabber/grabber.py
+index 69cd113..fd31123 100644
+--- a/urlgrabber/grabber.py
++++ b/urlgrabber/grabber.py
+@@ -1524,7 +1524,7 @@ class PyCurlFileObject(object):
+                 err.url = errurl
+                 raise err
+                 
+-            elif errcode in (42, 55, 56):
++            elif errcode == 42:
+                 # this is probably wrong but ultimately this is what happens
+                 # we have a legit http code and a pycurl 'writer failed' code
+                 # which almost always means something aborted it from outside
